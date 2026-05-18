@@ -1,0 +1,28 @@
+# Archivos de configuración local y credenciales (¡CRÍTICO!)
+.env
+
+# Dependencias instaladas por el gestor de paquetes
+node_modules/
+jspm_packages/
+web_modules/
+
+# Archivos de registro y depuración
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Temporales de compilación y empaquetadores
+.pnpm-debug.log*
+dist/
+build/
+.next/
+out/
+.nuxt/
+.cache/
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini

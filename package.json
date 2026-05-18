@@ -1,0 +1,29 @@
+{
+  "name": "jarvis-tech-bot",
+  "version": "1.0.0",
+  "description": "Bot personal de Discord optimizado para noticias de tecnología, ciberseguridad, IA y productividad.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dry-run": "node src/test-api.js"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "gemini",
+    "tech",
+    "news",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.11.2",
+    "axios": "^1.7.2",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "rss-parser": "^3.13.0"
+  }
+}
