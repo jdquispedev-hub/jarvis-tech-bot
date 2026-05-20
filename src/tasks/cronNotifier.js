@@ -53,8 +53,23 @@ export function initCronTasks(client) {
       await mensajeCarga.edit('🤖 *Analizando noticias y estructurando el resumen diario con Gemini...*');
       const boletin = await generateNewsSummary(noticias);
 
-      // 5. Enviar boletín final y limpiar el chat eliminando el aviso de carga temporal
-      await canal.send(boletin);
+      // 5. Dividir el boletín si excede el límite de Discord (2000 chars)
+      const partes = [];
+      let remaining = boletin;
+      while (remaining.length > 0) {
+        if (remaining.length <= 1900) { partes.push(remaining); break; }
+        let cut = remaining.lastIndexOf('\n---\n', 1900);
+        if (cut === -1 || cut < 100) cut = remaining.lastIndexOf('\n\n', 1900);
+        if (cut === -1 || cut < 100) cut = remaining.lastIndexOf('\n', 1900);
+        if (cut === -1 || cut < 100) cut = 1900;
+        partes.push(remaining.substring(0, cut).trim());
+        remaining = remaining.substring(cut).trim();
+      }
+
+      // 6. Enviar cada parte del boletín y limpiar el mensaje de carga
+      for (const parte of partes) {
+        await canal.send(parte);
+      }
       await mensajeCarga.delete().catch(() => {}); // Eliminación segura sin generar caídas
 
       console.log(`✅ [CRON] Boletín diario enviado con éxito al canal "${canal.name}" (${canal.id}).`);

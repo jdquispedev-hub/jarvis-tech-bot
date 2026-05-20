@@ -4,12 +4,15 @@ import { config } from '../config.js';
 // Inicializar el cliente SDK de Google Generative AI
 const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
-// Configurar el modelo gemini-1.5-flash (rápido, inteligente y con excelente ventana de contexto)
+// Configurar el modelo gemini-2.5-flash con thinking desactivado para respuestas completas
 const model = genAI.getGenerativeModel({
-  model: 'gemini-1.5-flash',
+  model: 'gemini-2.5-flash',
   generationConfig: {
-    maxOutputTokens: 1200, // Controlar la longitud máxima de tokens para evitar desbordes en Discord
+    maxOutputTokens: 8192, // Alto para asegurar respuestas completas (el límite final lo hace el bot)
     temperature: 0.6,      // Creatividad equilibrada para redacción técnica
+    thinkingConfig: {
+      thinkingBudget: 0,   // Desactivar el modo "thinking" que consumía tokens y truncaba la respuesta
+    },
   }
 });
 
@@ -63,7 +66,7 @@ INSTRUCCIONES CLAVE DE FORMATO:
 2. Reglas de Redacción:
    - Para cada noticia seleccionada, ponle un título en negrita que sea un enlace Markdown directo a la fuente, por ejemplo: [Título de la noticia](URL).
    - Escribe un resumen de máximo 1 o 2 líneas explicando qué ocurrió y por qué es importante de forma ultra-directa.
-   - Descarta noticias irrelevantes, spam o artículos repetidos. Selecciona solo lo mejor de lo mejor (máximo 1 o 2 noticias destacadas por categoría).
+   - Descarta noticias irrelevantes, spam o artículos repetidos. Selecciona solo lo mejor de lo mejor (2 o 3 noticias destacadas por categoría si son muy relevantes).
 
 3. Limitación de Tamaño (CRÍTICO):
    - El mensaje final NO debe superar bajo ningún concepto los 1900 caracteres. Discord rechaza mensajes mayores a 2000. Por ende, sé muy sintético y ve al grano sin introducciones largas ni despedidas pomposas.
@@ -85,11 +88,6 @@ Resumen: ${item.description || item.summary || 'Sin descripción'}
     ]);
 
     let boletin = result.response.text().trim();
-
-    // Recorte defensivo de seguridad si la IA excede los 2000 caracteres
-    if (boletin.length > 2000) {
-      boletin = boletin.substring(0, 1950) + '\n\n⚠️ *(El boletín superó el límite de caracteres y fue recortado para Discord)*';
-    }
 
     return boletin;
   } catch (error) {

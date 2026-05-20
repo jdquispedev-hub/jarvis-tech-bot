@@ -2,11 +2,16 @@ import Parser from 'rss-parser';
 
 const parser = new Parser();
 
-// Fuentes RSS oficiales y de alta fiabilidad técnica
+// Fuentes RSS oficiales y de alta fiabilidad técnica (reemplazando Hacker News para evitar errores 429)
 const FUENTES_NOTICIAS = [
   {
     name: 'The Hacker News',
     url: 'https://thehackernews.com/feeds/posts/default',
+    category: 'Ciberseguridad'
+  },
+  {
+    name: 'Dark Reading',
+    url: 'https://www.darkreading.com/rss.xml',
     category: 'Ciberseguridad'
   },
   {
@@ -20,13 +25,28 @@ const FUENTES_NOTICIAS = [
     category: 'Go & Infraestructura'
   },
   {
-    name: 'Hacker News (AI Trends)',
-    url: 'https://hnrss.org/newest?q=AI+OR+LLM+OR+Gemini+OR+Llama+OR+OpenAI',
+    name: 'Golang Weekly',
+    url: 'https://golangweekly.com/rss',
+    category: 'Go & Infraestructura'
+  },
+  {
+    name: 'VentureBeat AI',
+    url: 'https://venturebeat.com/category/ai/feed/',
     category: 'Modelos de IA & Tecnología'
   },
   {
-    name: 'Hacker News (GitHub & OpenSource)',
-    url: 'https://hnrss.org/newest?q=GitHub+OR+opensource',
+    name: 'TechCrunch AI',
+    url: 'https://techcrunch.com/category/artificial-intelligence/feed/',
+    category: 'Modelos de IA & Tecnología'
+  },
+  {
+    name: 'GitHub Changelog',
+    url: 'https://github.blog/changelog/feed/',
+    category: 'Plataformas & Código Abierto'
+  },
+  {
+    name: 'GitHub Blog',
+    url: 'https://github.blog/feed/',
     category: 'Plataformas & Código Abierto'
   }
 ];
@@ -45,8 +65,8 @@ export async function fetchTechNews() {
       // Descargar y parsear el feed XML
       const feed = await parser.parseURL(fuente.url);
       
-      // Extraemos únicamente las 3 noticias más recientes de cada fuente para no saturar a la IA
-      const articulos = feed.items.slice(0, 3).map(item => ({
+      // Extraemos únicamente las 5 noticias más recientes de cada fuente para no saturar a la IA
+      const articulos = feed.items.slice(0, 5).map(item => ({
         title: item.title,
         link: item.link,
         description: item.contentSnippet || item.summary || item.content || 'Sin descripción disponible.',
